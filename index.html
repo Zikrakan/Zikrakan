@@ -1334,6 +1334,15 @@ function sunnahBanner() {
   return info ? `<div class="sunnah-card"><span class="dot"></span><div>${info.t}</div></div>` : '';
 }
 
+function refreshSunnah() {
+  const slot = document.getElementById('sunnah-slot');
+  if (!slot) return;
+  const html = sunnahBanner();
+  if (slot.dataset.k !== html) { slot.innerHTML = html; slot.dataset.k = html; }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { try { refreshSunnah(); } catch (e) {} } });
+window.addEventListener('focus', () => { try { refreshSunnah(); } catch (e) {} });
+
 function checkNotifications() {
   if (!S.settings.notif || !S.settings.notif.enabled) return;
   if (Notification.permission !== "granted") return;
@@ -1424,6 +1433,7 @@ function getNextRamadanDate() {
 }
 
 function updateClock() {
+  try { refreshSunnah(); } catch (e) {}
   const tEl = document.getElementById('clock-time');
   const dEl = document.getElementById('clock-date');
   const hEl = document.getElementById('hijri-date');
@@ -1967,7 +1977,7 @@ function home(){
    <div id="hijri-date" class="hijri-date"></div>
    <div id="ramadan-count" class="ramadan-count"></div>
  </div>
- ${sunnahBanner()}
+ <div id="sunnah-slot">${sunnahBanner()}</div>
 
  <div class="streak-card">
    <div class="streak-header">
